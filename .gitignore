@@ -1,0 +1,26 @@
+# PyCharm / local environment
+.idea/
+.venv/
+
+# Data and outputs
+data/*
+outputs/*
+
+# Keep empty folders
+!data/.gitkeep
+!outputs/.gitkeep
+
+# Python / notebooks
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+
+# System / secrets
+.DS_Store
+.env
+
+# Raw data files
+*.csv
+*.xpt
+*.zip
+*.parquet
