@@ -1,6 +1,8 @@
 # PyCharm / local environment
 .idea/
 .venv/
+venv/
+tmp/
 
 # Data and outputs
 data/*
@@ -24,3 +26,4 @@ __pycache__/
 *.xpt
 *.zip
 *.parquet
+*.xlsx
