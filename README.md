@@ -6,18 +6,19 @@ This repository contains our capstone project code for analyzing NHANES data.
 
 - `notebooks/`: exploratory analysis and modeling notebooks
 - `src/`: reusable Python functions and scripts
+- `scripts/`: utility scripts for checking project setup and data loading
 - `data/`: local raw data; data files are not committed to GitHub
 - `outputs/`: generated figures, tables, and model outputs
 - `requirements.txt`: Python package dependencies
 
 The `.gitkeep` files allow Git to preserve otherwise empty folders. They do not contain project data.
 
-## Getting started
+## Local setup
 
 Clone the repository and enter the project folder:
 
 ```bash
-git clone https://github.com/yasthilsingh/capstone.git  # Download the repository from GitHub
+git clone https://github.com/yasthilsingh/capstone.git
 cd capstone
 ```
 
@@ -26,10 +27,48 @@ Create a virtual environment and install the project dependencies:
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
 ```
 
-Each team member must obtain the required NHANES data separately and save it in `data/`. Raw data and generated outputs are ignored by Git and should not be committed.
+## Local data setup
+
+Raw NHANES data files are not stored in this GitHub repository.
+
+Each team member should download the required NHANES data separately from the shared Google Drive folder and place the files inside the local `data/` folder.
+
+The expected local folder structure is:
+
+```text
+data/
+├── Demographic/
+├── Dietary/
+├── Examination/
+├── Lab/
+└── Questionnaire/
+```
+
+The current data loader uses the `Demographic`, `Examination`, `Lab`, and `Questionnaire` folders. The `Dietary` folder is available locally for possible later use, but it is not currently part of the main loader.
+
+Raw data and generated outputs are ignored by Git and should not be committed.
+
+## NHANES data loader
+
+The reusable NHANES loader is located here:
+
+```text
+src/nhanes_loader.py
+```
+
+The loader reads selected NHANES `.xpt` files from the local `data/` folder and merges them into one master dataframe using `SEQN`, the NHANES participant identifier.
+
+To check that the local data setup works, run:
+
+```bash
+python -m scripts.check_data_load
+```
+
+When tested locally, the loader successfully read 21 NHANES files and produced a merged master dataframe with 15,560 rows and 344 columns.
 
 ## Collaboration workflow
 
@@ -69,7 +108,7 @@ Please use a separate branch for your work instead of committing directly to `ma
    ```
 
    - `git push` uploads your commits.
-   - `origin` refers to your GitHub repository.
+   - `origin` refers to the GitHub repository.
    - `feature/your-task-name` is the branch being uploaded.
    - `-u` connects your local branch to its GitHub counterpart.
 
