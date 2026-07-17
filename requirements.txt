@@ -6,3 +6,5 @@ scipy
 scikit-learn
 statsmodels
 xgboost
+svy # Python Package for Complex Survey Design and Analysis
+polars # svy package uses a Polars DataFrame internally.
