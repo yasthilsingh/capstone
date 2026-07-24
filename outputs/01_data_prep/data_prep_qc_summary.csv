@@ -1,0 +1,20 @@
+check,passed
+Adult row count was preserved,True
+SEQN is unique,True
+All participants are age 18 or older,True
+PHQ-9 scores are between 0 and 27,True
+Depression indicator contains only 0 and 1,True
+Social jetlag is between 0 and 12 hours,True
+Weekday sleep duration is between 2 and 14 hours,True
+Weekend sleep duration is between 2 and 14 hours,True
+Weighted sleep duration is between 2 and 14 hours,True
+HbA1c is positive when present,True
+hs-CRP is positive when present,True
+log hs-CRP is present whenever hs-CRP is present,True
+Primary model has no missing required variables,True
+HbA1c model has no missing required variables,True
+Primary model survey weights are positive,True
+HbA1c model survey weights are positive,True
+Primary model row count matches eligibility flag,True
+HbA1c model row count matches eligibility flag,True
+hs-CRP sensitivity sample contains only values <= 10,True
