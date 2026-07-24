@@ -1,5 +1,0 @@
-dataset,n,percent_of_adult_sample
-Adult merged sample,9693,100.0
-Primary hs-CRP model,6562,67.6983390075312
-HbA1c sensitivity model,6741,69.54503249767873
-hs-CRP <= 10 mg/L sensitivity model,6038,62.29237594140101

@@ -1,8 +1,0 @@
-step,retained_n,lost_from_previous_n,percent_of_adult_sample
-Adult merged sample,9693,0.0,100.0
-Complete PHQ-9 score,8276,1417.0,85.38120292994945
-Complete social jetlag and sleep duration,8114,162.0,83.70989373774889
-Complete demographic and behavior covariates,7055,1059.0,72.7844836479934
-Valid survey design variables,7055,0.0,72.7844836479934
-Nonmissing log hs-CRP,6562,493.0,67.6983390075312
-Eligible for primary hs-CRP model,6562,0.0,67.6983390075312
