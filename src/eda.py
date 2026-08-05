@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import math
 
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.tools.tools import add_constant
+
 
 # Analyze missingness
 
@@ -119,6 +122,25 @@ def style_axes(ax):
     ax.set_xlabel("")
     ax.tick_params(labelsize=8)
 
+def compute_vif(df, covariates, categorical=None, interaction=None):
+    """
+    Calculate variance inflation factors (VIFs) for assessing multicollinearity
+    in the specified predictors. Categorical variables are one-hot encoded
+    and an intercept is added before computing VIFs.
+    """
+    X = df[covariates].copy()
+    # One hot encode categorical columns
+    X = pd.get_dummies(X, columns=categorical or [], drop_first=True)
+    X = X.astype(float)
+    X = add_constant(X.astype(float))
+
+    vif = pd.Series(
+        [variance_inflation_factor(X.values, i) for i in range(X.shape[1])],
+        index=X.columns
+    )
+    # Return highest values at the top, descending order
+    return vif.drop("const").sort_values(ascending=False)
+
 
 """
 Distribution plots
@@ -189,12 +211,14 @@ def plot_grid(df, columns, plot_func, figsize_per_plot=(3, 2), title="Distributi
         nrows,
         ncols,
         figsize=(figsize_per_plot[0] * ncols,
-                 figsize_per_plot[1] * nrows)
+                 figsize_per_plot[1] * nrows),
+        constrained_layout=True
     )
 
     axes = axes.flatten()
     for ax, col in zip(axes, columns):
         plot_func(df, col, ax=ax)
+        ax.set_title(ax.get_title(), pad=15)
 
     for ax in axes[n:]:
         fig.delaxes(ax)
@@ -202,9 +226,10 @@ def plot_grid(df, columns, plot_func, figsize_per_plot=(3, 2), title="Distributi
     fig.suptitle(
         title,
         fontsize=20,
-        fontweight="bold"
+        fontweight="bold",
     )
-    plt.tight_layout(rect=[0,0,1,.97])
+    fig.suptitle(title, fontsize=20, fontweight="bold")
+    fig.set_constrained_layout_pads(h_pad=0.08, w_pad=0.05)
     plt.show()
 
 """
@@ -325,24 +350,25 @@ def plot_depression_by_category(df, category, ax, outcome="phq9_score", max_cate
     is_numeric = pd.api.types.is_numeric_dtype(plot[category])
     if is_numeric and unique > max_categories:
         plot[category] = pd.qcut(plot[category], q=max_categories, duplicates="drop")
-        plot[category] = plot[category].apply(
-                lambda iv: f"{int(iv.left)}-{int(iv.right)}"
-            )
-    
-    plt.figure(figsize=(8, 5))
-
+        plot[category] = plot[category].astype(str)
+        
     sns.boxplot(
         data=plot,
         x=category,
         y=outcome,
         ax=ax
     )
-
-    ax.set_title(f"{outcome} vs {category}")
+    ax.set_title(
+        f"{outcome} vs\n{category}",
+        fontsize=10,
+        pad=8
+    )
 
     n_boxes = plot[category].nunique()
     fontsize = 10 if n_boxes <= 6 else 8
     ax.tick_params(axis='x', labelsize=fontsize)
+    ax.set_ylabel("")
+
     for label in ax.get_xticklabels():
         label.set_rotation(45)
         label.set_ha('right')
@@ -394,6 +420,7 @@ cont_columns = [
     "age",
     "income_poverty_ratio",
     "bmi",
+    "hours_worked_last_week",
 ]
 
 # Categorical
@@ -401,6 +428,8 @@ nominal_columns = [
     "sex",
     "race_ethnicity",
     "smoking_status",
+    "currently_employed",
+    "work_schedule",
 ]
 
 # Categorical (ordinal)
@@ -505,7 +534,8 @@ analysis_columns = [
     "current_smoking_frequency",
     "moderate_recreation",
     "any_recreational_activity",
-    "ever_smoked_100_cigarettes"
+    "ever_smoked_100_cigarettes",
+    "hours_worked_last_week",
 ]
 
 sleep_depression_columns = [
@@ -521,7 +551,10 @@ lifestyle_columns = [
     "income_poverty_ratio",
     "current_smoking_frequency",
     "moderate_recreation",
-    "any_recreational_activity"
+    "any_recreational_activity",
+    "currently_employed",
+    "work_schedule",
+    "hours_worked_last_week",
 ]
 
 metabolic_columns = [
