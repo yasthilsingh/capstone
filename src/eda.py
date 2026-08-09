@@ -10,6 +10,30 @@ import math
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
 
+# Labels for plotting
+LABEL_MAP = {
+    "phq9_score": "PHQ-9 Score",
+    "hba1c": "HbA1c",
+    "hs_crp": "hs-CRP",
+    "log_hs_crp": "log(hs-CRP)",
+    "hs_crp_gt_10": "hs-CRP > 10",
+    "bmi": "BMI",
+    "sjl_x_log_hs_crp": "Social Jetlag × log(hs-CRP)",
+    "sjl_x_hba1c": "Social Jetlag × HbA1c",
+    "social_jetlag_hours": "Social Jetlag (hrs)",
+    "weighted_average_sleep_duration": "Avg Sleep Duration",
+    "income_poverty_ratio": "Income-to-Poverty Ratio",
+    "any_recreational_activity": "Any Recreational Activity",
+    "ever_smoked_100_cigarettes": "Ever Smoked 100+ Cigarettes",
+    "current_smoking_frequency": "Current Smoking Frequency",
+    "depression_indicator": "Depression Indicator",
+}
+
+def clean_label(name):
+    """Return a readable label for a column name with no underscores 
+        and proper capitalization.
+    """
+    return LABEL_MAP.get(name, name.replace("_", " ").title())
 
 # Analyze missingness
 
@@ -43,6 +67,22 @@ def attrition_table(df, flag_col, labels=None):
         "N": [total, eligible, ineligible],
         "Pct of total": [100.0, round(100*eligible/total, 1), round(100*ineligible/total, 1)]
     })
+
+def attrition_summary(df, flag_col):
+    """
+    attrition comparison between models
+    """
+    total = len(df)
+    rows = []
+    for label, flag_col in flag_col.items():
+        n = df[flag_col].sum()
+        rows.append({
+            "Model":label,
+            "N": f"{n:,}",
+            "Retained": f"{100 * n /total:.1f}%"
+        })
+
+    return pd.DataFrame(rows)
 
 
 # Demonstrate who is included/not in our study
@@ -165,7 +205,7 @@ def plot_dist(df, column, ax=None):
         linewidth=0.5
     )
     ax.set_title(
-        column.replace("_", " ").title(),
+        clean_label(column),
         fontsize=10,
         fontweight="bold"
     )
@@ -188,7 +228,7 @@ def plot_counts(df, column, ax=None):
         ax=ax
     )
     ax.set_title(
-        column.replace("_", " ").title(),
+        clean_label(column),
         fontsize=10,
         fontweight="bold"
     )
@@ -250,7 +290,7 @@ def identify_outs(df, column, ax=None):
         ax=ax
     )
     ax.set_title(
-        column.replace("_", " ").title(),
+        clean_label(column),
         fontsize=10,
         fontweight="bold"
     )
@@ -287,6 +327,7 @@ def plot_correlation_heatmap(df, variables):
     method = 'pearson'
 
     corr = df[variables].corr(method=method)
+    corr = corr.rename(index=clean_label, columns=clean_label)
     plt.figure(figsize=(8,6))
     ax = sns.heatmap(
         corr,
@@ -320,9 +361,12 @@ def plot_pairplot(df, variables, hue=None):
     """
     Generates a scatter plot matrix (pairplot) with KDE diagonals
     """
+    cols = variables + ([hue] if hue else [])
+    plot = df[cols].rename(columns=clean_label)
+    hue = clean_label(hue) if hue else None 
 
     sns.pairplot(
-        df[variables + ([hue] if hue else [])],
+        plot,
         diag_kind="kde",
         corner=True,
         hue=hue
@@ -350,7 +394,6 @@ def plot_depression_by_category(df, category, ax, outcome="phq9_score", max_cate
     is_numeric = pd.api.types.is_numeric_dtype(plot[category])
     if is_numeric and unique > max_categories:
         plot[category] = pd.qcut(plot[category], q=max_categories, duplicates="drop")
-        plot[category] = plot[category].astype(str)
         
     sns.boxplot(
         data=plot,
@@ -359,7 +402,7 @@ def plot_depression_by_category(df, category, ax, outcome="phq9_score", max_cate
         ax=ax
     )
     ax.set_title(
-        f"{outcome} vs\n{category}",
+        f"{clean_label(outcome)} vs\n{clean_label(category)}",
         fontsize=10,
         pad=8
     )
@@ -388,7 +431,7 @@ def plot_scatter(df, x, y, ax):
         line_kws={"color": "red"}
     )
 
-    ax.set_title(f"{y} vs {x}")
+    ax.set_title(f"{clean_label(y)} vs {clean_label(x)}")
 
 
 
@@ -519,6 +562,8 @@ analysis_columns = [
     "weekday_wake_time_minutes",
     "weekend_sleep_time_minutes",
     "weekend_wake_time_minutes",
+    "weighted_average_sleep_duration",  
+    "social_jetlag_hours", 
 
     # Metabolic 
     "hba1c",
