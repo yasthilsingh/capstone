@@ -30,14 +30,11 @@ source .venv/bin/activate
 python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 ```
-
 ## Local data setup
 
-Raw NHANES data files are not stored in this GitHub repository.
+The data used is provided in the "data" folder in this repository. It is NHANES data initially located at https://wwwn.cdc.gov/nchs/nhanes/continuousnhanes/default.aspx?Cycle=2017-2020
 
-Each team member should download the required NHANES data separately from the shared Google Drive folder and place the files inside the local `data/` folder.
-
-The expected local folder structure is:
+The folder structure is:
 
 ```text
 data/
@@ -48,7 +45,7 @@ data/
 └── Questionnaire/
 ```
 
-The current data loader uses the `Demographic`, `Examination`, `Lab`, and `Questionnaire` folders. The `Dietary` folder is available locally for possible later use, but it is not currently part of the main loader.
+The current data loader uses the `Demographic`, `Examination`, `Lab`, and `Questionnaire` folders. 
 
 Raw data and generated outputs are ignored by Git and should not be committed.
 
