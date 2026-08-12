@@ -39,7 +39,6 @@ The folder structure is:
 ```text
 data/
 ├── Demographic/
-├── Dietary/
 ├── Examination/
 ├── Lab/
 └── Questionnaire/
