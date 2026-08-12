@@ -193,9 +193,6 @@ def plot_dist(df, column, ax=None):
     if ax is None:
         fig, ax = plt.subplots(figsize=(4, 3))
 
-    #n_unique = df[column].nunique(dropna=True)
-    #bins = min(30, n_unique) if n_unique <= 30 else 30
-
     sns.histplot(
         data=df,
         x=column,
@@ -259,15 +256,14 @@ def plot_grid(df, columns, plot_func, figsize_per_plot=(3, 2), title="Distributi
     for ax, col in zip(axes, columns):
         plot_func(df, col, ax=ax)
         ax.set_title(ax.get_title(), pad=15)
+        ax.tick_params(axis='x', labelsize=5)
+        ticks = ax.get_xticks()
+        ax.set_xticks(ticks)
+        ax.set_xticklabels([lbl.get_text().replace('.0', '') for lbl in ax.get_xticklabels()])
 
     for ax in axes[n:]:
         fig.delaxes(ax)
         
-    fig.suptitle(
-        title,
-        fontsize=20,
-        fontweight="bold",
-    )
     fig.suptitle(title, fontsize=20, fontweight="bold")
     fig.set_constrained_layout_pads(h_pad=0.08, w_pad=0.05)
     plt.show()
@@ -276,7 +272,6 @@ def plot_grid(df, columns, plot_func, figsize_per_plot=(3, 2), title="Distributi
 Outlier Detection
 
 """
-
 
 def identify_outs(df, column, ax=None):
     # Use boxplots and IQR
@@ -394,6 +389,14 @@ def plot_depression_by_category(df, category, ax, outcome="phq9_score", max_cate
     is_numeric = pd.api.types.is_numeric_dtype(plot[category])
     if is_numeric and unique > max_categories:
         plot[category] = pd.qcut(plot[category], q=max_categories, duplicates="drop")
+        intervals = plot[category].cat.categories
+        labels = [
+            f"({interval.left:.2f}, {interval.right:.2f}]"
+            for interval in intervals
+        ]
+        plot[category] = plot[category].cat.rename_categories(labels)
+
+
         
     sns.boxplot(
         data=plot,
@@ -402,15 +405,21 @@ def plot_depression_by_category(df, category, ax, outcome="phq9_score", max_cate
         ax=ax
     )
     ax.set_title(
-        f"{clean_label(outcome)} vs\n{clean_label(category)}",
+        f"{clean_label(category)} vs\n{clean_label(outcome)}",
         fontsize=10,
         pad=8
     )
 
+    if ax.get_subplotspec().is_first_col():
+        ax.set_ylabel("PHQ-9 Score", fontsize=10)
+    else:
+        ax.set_ylabel("")
+
     n_boxes = plot[category].nunique()
     fontsize = 10 if n_boxes <= 6 else 8
     ax.tick_params(axis='x', labelsize=fontsize)
-    ax.set_ylabel("")
+    ax.set_xlabel(clean_label(category), fontsize=10)
+
 
     for label in ax.get_xticklabels():
         label.set_rotation(45)
@@ -431,7 +440,17 @@ def plot_scatter(df, x, y, ax):
         line_kws={"color": "red"}
     )
 
-    ax.set_title(f"{clean_label(y)} vs {clean_label(x)}")
+    ax.set_title(f"{clean_label(x)} vs {clean_label(y)}")
+
+    ax.set_xlabel(
+        clean_label(x),
+        fontsize=10
+    )
+
+    ax.set_ylabel(
+        clean_label(y),
+        fontsize=10
+    )
 
 
 
@@ -487,7 +506,7 @@ ordinal_columns = [
     "phq9_moving_or_speaking_slowly",
     "phq9_thoughts_better_off_dead",
     "current_smoking_frequency",
-    "phq9_items_answered",
+    "phq9_score",
 ]
 
 cat_columns = nominal_columns + ordinal_columns
