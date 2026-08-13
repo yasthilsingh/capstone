@@ -1,10 +1,16 @@
-pandas
-numpy
-matplotlib
-seaborn
-scipy
-scikit-learn
-statsmodels
-xgboost
-svy # Python Package for Complex Survey Design and Analysis
-polars # svy package uses a Polars DataFrame internally.
+# Core data analysis
+numpy==2.5.1
+pandas==3.0.3
+scipy==1.18.0
+
+# Statistical modeling and NHANES survey design
+statsmodels==0.14.6
+svy==0.19.0
+polars==1.42.1
+
+# Visualization
+matplotlib==3.11.0
+seaborn==0.13.2
+
+# Local notebook execution
+ipykernel==7.3.0
