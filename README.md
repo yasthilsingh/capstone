@@ -1,4 +1,4 @@
-# Capstone Project
+# Sleep and Depression Symptoms: Examining the Role of Metabolic and Inflammatory Health
 
 This repository contains our capstone project code for analyzing NHANES data.
 
