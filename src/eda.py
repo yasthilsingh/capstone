@@ -506,7 +506,6 @@ ordinal_columns = [
     "phq9_moving_or_speaking_slowly",
     "phq9_thoughts_better_off_dead",
     "current_smoking_frequency",
-    "phq9_score",
 ]
 
 cat_columns = nominal_columns + ordinal_columns
