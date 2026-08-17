@@ -1,14 +1,22 @@
 # Sleep and Depression Symptoms: Examining the Role of Metabolic and Inflammatory Health
 
-This repository contains our capstone project code for analyzing NHANES data.
+This repository contains our capstone project code for analyzing NHANES data. 
+We test whether metabolic dysregulation (HbA1c) and systemic inflammation (hs-CRP) 
+modify the association between social jetlag and depressive symptoms (PHQ-9). 
+The analysis combines a primary interaction model with a set of sensitivity analyses 
+to assess the robustness of model terms.
 
 ## Project structure
 
 - `notebooks/`: exploratory analysis and modeling notebooks
-- `src/`: reusable Python functions and scripts
+  - `01_data_prep.ipynb`: data loading and preparation
+  - `02_eda_missingness.ipynb`: exploratory analysis and missingness checks
+  - `03_primary_model.ipynb`: primary model
+  - `04_sensitivity.ipynb`: sensitivity analyses
+- `src/`: reusable Python modules (`nhanes_loader.py`, `eda.py`, `sensitivity.py`)
 - `scripts/`: utility scripts for checking project setup and data loading
 - `data/`: local raw data; data files are not committed to GitHub
-- `outputs/`: generated figures, tables, and model outputs
+- `outputs/`: generated model outputs
 - `requirements.txt`: Python package dependencies
 
 The `.gitkeep` files allow Git to preserve otherwise empty folders. They do not contain project data.
@@ -65,6 +73,11 @@ python -m scripts.check_data_load
 ```
 
 When tested locally, the loader successfully read 21 NHANES files and produced a merged master dataframe with 15,560 rows and 344 columns.
+
+Additional reusable modules support the analysis:
+
+- `src/eda.py`: helpers for exploratory analysis and missingness.
+- `src/sensitivity.py`: helpers for the sensitivity analyses.
 
 ## Collaboration workflow
 
